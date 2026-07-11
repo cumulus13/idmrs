@@ -14,10 +14,12 @@ use clap::Parser;
 use colored::*;
 use config::Config;
 use std::process::ExitCode;
+use clap_verison_flag::colorful_version;
+use clap_color_help::default_styles;
 
 /// Command line downloader with/via Internet Download Manager (IDM)
 #[derive(Parser, Debug)]
-#[command(name = "idmrs", version, about, long_about = None)]
+#[command(name = "idmrs", version, about, long_about = None, styles = default_styles())]
 struct Args {
     /// URL(s) to download, or "c" to get url from clipboard
     urls: Vec<String>,
@@ -182,6 +184,12 @@ fn run() -> anyhow::Result<()> {
 }
 
 fn main() -> ExitCode {
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() == 2 && (args[1] == "-V" || args[1] == "--version") {
+        let version = colorful_version!();
+        version.print_and_exit();
+    }
+
     if let Err(e) = run() {
         eprintln!("{}", e.to_string().white().on_red());
         return ExitCode::FAILURE;
