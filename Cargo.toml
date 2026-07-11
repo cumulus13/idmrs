@@ -1,6 +1,6 @@
 [package]
 name = "idmrs"
-version = "0.1.10"
+version = "0.1.11"
 edition = "2021"
 authors = ["Hadi Cahyadi <cumulus13@gmail.com>"]
 description = "Command line downloader via Internet Download Manager (IDM) on Windows"
@@ -23,7 +23,6 @@ dirs = "5"
 windows = { version = "0.58", features = [
     "Win32_Foundation",
     "Win32_System_Com",
-    "Win32_System_Com_StructuredStorage", # <-- ADD THIS LINE
     "Win32_System_Variant",
     "Win32_System_Ole",
     "Win32_UI_WindowsAndMessaging",

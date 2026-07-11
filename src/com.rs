@@ -7,13 +7,12 @@
 #![cfg(windows)]
 
 use anyhow::{anyhow, Result};
-use windows::core::{w, GUID, PCWSTR};
+use windows::core::{w, GUID, VARIANT};
 use windows::Win32::Globalization::LOCALE_USER_DEFAULT;
 use windows::Win32::System::Com::{
     CoCreateInstance, CoInitializeEx, CoUninitialize, IDispatch, CLSCTX_LOCAL_SERVER,
     COINIT_APARTMENTTHREADED, DISPATCH_METHOD, DISPPARAMS,
 };
-use windows::Win32::System::Com::VARIANT;
 use windows::Win32::UI::WindowsAndMessaging::{
     BringWindowToTop, EnumWindows, GetWindowTextLengthW, GetWindowTextW, IsWindowVisible,
     SetForegroundWindow, ShowWindow, SW_SHOW,
@@ -65,7 +64,7 @@ pub fn send_link_to_idm(args: &SendLinkArgs) -> Result<()> {
 
         let name = w!("SendLinkToIDM2");
         let mut dispid: i32 = 0;
-        let names = [PCWSTR(name.as_ptr())];
+        let names = [name];
         disp.GetIDsOfNames(
             &GUID::zeroed(),
             names.as_ptr(),

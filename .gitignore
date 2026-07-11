@@ -2,19 +2,16 @@
 Cargo.lock
 *.ini
 
-# Ignore Sublime Text project files
-*.sublime-*
-
-# Added entries (9 items)
+# Added entries (12 items)
 *.exe
-PLAN*.md
-ANSWER*.md
-CLAUDE.md
+*.bak
 tmp*
 src/tmp*
+CLAUDE.md
+PLAN.md
+ANSWER*.md
 download/
 downloads/
 gitignore_backup/
-
-# Added entries (1 items)
-*.bak
+.pt/
+*sublime*

@@ -22,17 +22,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Checkout source code
-        uses: actions/checkout@v4
-
-      - name: Set up Rust toolchain
+      - name: Install stable toolchain
         uses: dtolnay/rust-toolchain@stable
-
-      - name: Automatically Update Lockfile
-        run: cargo update
-
-      - name: Build binary with controlled resource limits
-        run: cargo build --release -j 2
 
       - name: Cache cargo registry
         uses: actions/cache@v4
@@ -44,7 +35,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build
-        run: cargo build --release --verbose -j 2
+        run: cargo build --release --verbose
 
       - name: Test
         run: cargo test --verbose
