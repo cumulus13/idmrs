@@ -14,7 +14,7 @@ use clap::Parser;
 use colored::*;
 use config::Config;
 use std::process::ExitCode;
-use clap_verison_flag::colorful_version;
+use clap_version_flag::colorful_version;
 use clap_color_help::default_styles;
 
 /// Command line downloader with/via Internet Download Manager (IDM)

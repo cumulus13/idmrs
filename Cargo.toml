@@ -1,6 +1,6 @@
 [package]
 name = "idmrs"
-version = "0.1.16"
+version = "0.1.17"
 edition = "2021"
 authors = ["Hadi Cahyadi <cumulus13@gmail.com>"]
 description = "Command line downloader via Internet Download Manager (IDM) on Windows"
