@@ -83,17 +83,6 @@ cd idmrs
 cargo build --release --target x86_64-pc-windows-msvc
 ```
 
-## Publishing (maintainers)
-
-Pushing a tag matching `v*.*.*` runs the release workflow: it builds and
-tests on Windows/Linux/macOS, then publishes to crates.io using the
-`CARGO_REGISTRY_TOKEN` repository secret, then cuts a GitHub Release.
-
-```
-git tag v0.1.0
-git push origin v0.1.0
-```
-
 ## License
 
 MIT © Hadi Cahyadi <cumulus13@gmail.com>
