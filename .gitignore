@@ -15,3 +15,6 @@ src/tmp*
 download/
 downloads/
 gitignore_backup/
+
+# Added entries (1 items)
+*.bak
