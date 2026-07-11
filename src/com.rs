@@ -13,8 +13,7 @@ use windows::Win32::System::Com::{
     CoCreateInstance, CoInitializeEx, CoUninitialize, IDispatch, CLSCTX_LOCAL_SERVER,
     COINIT_APARTMENTTHREADED, DISPATCH_METHOD, DISPPARAMS,
 };
-// use windows::Win32::System::Variant::VARIANT;
-use windows::Win32::System::Com::StructuredStorage::VARIANT;
+use windows::Win32::System::Com::VARIANT;
 use windows::Win32::UI::WindowsAndMessaging::{
     BringWindowToTop, EnumWindows, GetWindowTextLengthW, GetWindowTextW, IsWindowVisible,
     SetForegroundWindow, ShowWindow, SW_SHOW,
