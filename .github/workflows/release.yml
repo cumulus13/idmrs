@@ -4,9 +4,9 @@ on:
   push:
     tags:
       - "v*.*.*"
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -35,7 +35,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build
-        run: cargo build --release --verbose -j 2
+        run: cargo build --release --verbose
 
       - name: Test
         run: cargo test --verbose

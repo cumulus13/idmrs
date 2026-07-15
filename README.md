@@ -1,7 +1,8 @@
 # idmrs
 
-Command line downloader for **Internet Download Manager (IDM)** on Windows.
-Rust port of [pyidm](https://github.com/cumulus13/pyidm) (`idm/idm.py`).
+Command line downloader **and Rust library** for **Internet Download
+Manager (IDM)** on Windows. Port of [pyidm](https://github.com/cumulus13/pyidm)
+(`idm/idm.py`).
 
 Sends a link to IDM via COM automation (`CIDMLinkTransmitter` /
 `SendLinkToIDM2`), exactly like the Python original does through `comtypes`,
@@ -9,8 +10,10 @@ but with no Python runtime required.
 
 > Windows only — IDM itself is a Windows-only application, so this tool
 > refuses to run (with a clear error) on Linux/macOS, same as `idm.py`.
+> The crate still *builds* cross-platform (so other crates depending on it
+> aren't forced onto Windows), it just can't actually talk to IDM elsewhere.
 
-## Install
+## Install (CLI)
 
 ```
 cargo install idmrs
@@ -18,7 +21,37 @@ cargo install idmrs
 
 Or download a prebuilt binary from [Releases](https://github.com/cumulus13/idmrs/releases).
 
-## Usage
+## Use as a library
+
+Add it to your `Cargo.toml`:
+
+```toml
+[dependencies]
+idmrs = "0.1.20"
+```
+
+```rust
+use idmrs::{DownloadMode, SendLinkRequest};
+
+fn main() -> anyhow::Result<()> {
+    let req = SendLinkRequest::new("https://example.com/file.zip")
+        .path_to_save(r"D:\Downloads")
+        .user_agent("Mozilla/5.0")
+        .mode(DownloadMode::AddOnly); // queue it without starting the download
+
+    idmrs::send_link(&req)?;
+    Ok(())
+}
+```
+
+Other public items: `idmrs::Config` (reads/writes the same `idm.ini` the CLI
+uses) and `idmrs::bring_to_top()` (brings IDM's window to the foreground).
+Everything not gated to Windows compiles on any target; `send_link` and
+`bring_to_top` are no-ops / errors off-Windows since IDM doesn't exist there.
+
+Full API docs: `cargo doc --open` (or docs.rs once published).
+
+## CLI Usage
 
 ```
 idmrs [OPTIONS] [URLS]...
@@ -81,6 +114,17 @@ e.g. `idmrs --config download:confirm:1`.
 git clone https://github.com/cumulus13/idmrs
 cd idmrs
 cargo build --release --target x86_64-pc-windows-msvc
+```
+
+## Publishing (maintainers)
+
+Pushing a tag matching `v*.*.*` runs the release workflow: it builds and
+tests on Windows/Linux/macOS, then publishes to crates.io using the
+`CARGO_REGISTRY_TOKEN` repository secret, then cuts a GitHub Release.
+
+```
+git tag v0.1.0
+git push origin v0.1.0
 ```
 
 ## License

@@ -4,18 +4,16 @@
 // Repo        : https://github.com/cumulus13/idmrs
 // License     : MIT
 //
-// Rust port of https://github.com/cumulus13/pyidm (idm/idm.py)
-
-mod config;
-#[cfg(windows)]
-mod com;
+// This is a thin CLI over the `idmrs` library (see src/lib.rs). Anything in
+// idmrs::* can also be used directly from other Rust programs by adding
+// `idmrs = "0.1"` as a dependency — see the crate docs / README for examples.
 
 use clap::Parser;
-use colored::*;
-use config::Config;
-use std::process::ExitCode;
 use clap_version_flag::colorful_version;
 use clap_color_help::default_styles;
+use colored::*;
+use idmrs::{bring_to_top, send_link, Config, DownloadMode, SendLinkRequest};
+use std::process::ExitCode;
 
 /// Command line downloader with/via Internet Download Manager (IDM)
 #[derive(Parser, Debug)]
@@ -98,12 +96,6 @@ fn docs() {
     println!("{}", "debug:verbose:1 or 0".bright_green());
 }
 
-#[cfg(not(windows))]
-fn run() -> anyhow::Result<()> {
-    anyhow::bail!("{}", "This only for Windows OS !".bright_white().on_red());
-}
-
-#[cfg(windows)]
 fn run() -> anyhow::Result<()> {
     let args = Args::parse();
 
@@ -129,7 +121,7 @@ fn run() -> anyhow::Result<()> {
     }
 
     if args.urls.is_empty() {
-        com::bring_to_top();
+        bring_to_top();
         anyhow::bail!("No URL given. Run with --help for usage.");
     }
 
@@ -142,12 +134,12 @@ fn run() -> anyhow::Result<()> {
     let confirm = args.confirm || cfg.get_bool("DOWNLOAD_CONFIRM");
     let user_agent = args.user_agent.clone().or_else(|| cfg.get("DATA_USER_AGENT"));
 
-    let lflag = if confirm {
-        0
+    let mode = if confirm {
+        DownloadMode::Confirm
     } else if args.add {
-        2
+        DownloadMode::AddOnly
     } else {
-        1
+        DownloadMode::Download
     };
 
     for url in &args.urls {
@@ -157,20 +149,30 @@ fn run() -> anyhow::Result<()> {
             url.clone()
         };
 
-        let send_args = com::SendLinkArgs {
-            link: &resolved,
-            referrer: args.referrer.as_deref(),
-            cookie: args.cookie.as_deref(),
-            post_data: args.post_data.as_deref(),
-            user: args.username.as_deref(),
-            password: args.password.as_deref(),
-            path_to_save: Some(download_path.as_str()),
-            output: args.output.as_deref(),
-            lflag,
-            user_agent: user_agent.as_deref(),
-        };
+        let mut req = SendLinkRequest::new(resolved).path_to_save(download_path.clone()).mode(mode);
+        if let Some(v) = &args.referrer {
+            req = req.referrer(v.clone());
+        }
+        if let Some(v) = &args.cookie {
+            req = req.cookie(v.clone());
+        }
+        if let Some(v) = &args.post_data {
+            req = req.post_data(v.clone());
+        }
+        if let Some(v) = &args.username {
+            req = req.user(v.clone());
+        }
+        if let Some(v) = &args.password {
+            req = req.password(v.clone());
+        }
+        if let Some(v) = &args.output {
+            req = req.output(v.clone());
+        }
+        if let Some(v) = &user_agent {
+            req = req.user_agent(v.clone());
+        }
 
-        match com::send_link_to_idm(&send_args) {
+        match send_link(&req) {
             Ok(()) => {
                 if !cfg.get_bool("DEBUG_VERBOSE") {
                     println!("\n{}", "Link sent to IDM successfully.".bright_yellow().on_blue());
@@ -189,7 +191,7 @@ fn main() -> ExitCode {
         let version = colorful_version!();
         version.print_and_exit();
     }
-
+    
     if let Err(e) = run() {
         eprintln!("{}", e.to_string().white().on_red());
         return ExitCode::FAILURE;

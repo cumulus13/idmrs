@@ -1,14 +1,26 @@
 [package]
 name = "idmrs"
-version = "0.1.19"
+version = "0.1.20"
 edition = "2021"
 authors = ["Hadi Cahyadi <cumulus13@gmail.com>"]
-description = "Command line downloader via Internet Download Manager (IDM) on Windows"
+description = "Drive Internet Download Manager (IDM) from Rust — usable as a CLI or as a library"
 license = "MIT"
 repository = "https://github.com/cumulus13/idmrs"
 readme = "README.md"
 keywords = ["idm", "download", "windows", "cli"]
-categories = ["command-line-utilities"]
+categories = ["command-line-utilities", "api-bindings"]
+
+[lib]
+name = "idmrs"
+path = "src/lib.rs"
+
+[[bin]]
+name = "idmrs"
+path = "src/main.rs"
+
+[package.metadata.docs.rs]
+default-target = "x86_64-pc-windows-msvc"
+targets = ["x86_64-pc-windows-msvc"]
 
 [dependencies]
 clap = { version = "4", features = ["derive", "color"] }
